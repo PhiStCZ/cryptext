@@ -1,0 +1,5 @@
+# Note: for the notebooks you also need quarto, but I install that outside of python
+jupyter
+numpy
+matplotlib
+pandas

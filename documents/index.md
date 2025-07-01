@@ -1,0 +1,21 @@
+# Liber Primus Statistical (and sometimes other) Analyses
+
+*(Note: if the hyperlinks lead to non-existent files then you should generate them using `make`)*
+
+## Main Exploration Thread
+
+00. [Overview](./00-overview.html):
+    An introductory overview of both the solved and unsolved parts of Liber Primus. For experienced solvers, it contains little new information, but it summarizes the properties of the solved sections, and, using them, justifies most base assumptions about the unsolved sections.
+01. [Repeated Phrases By Word Length](./01-repeated-phrases-by-word-length.html):
+    Using a new method of phrase-pair search, this document uncovers a pattern in the ciphertext, where first letters of words in a phrase pair are more likely to encrypt into the same ciphertext letter.
+02. [Autokey Component Hypothesis](./02-autokey-component-hypothesis.html):
+    This document presents a hypothesis that the cipher has an "autokey component", i.e. that ciphertext is dependent on the previous plaintext, but discovers that it is actually probably the opposite, i.e. that ciphertext is dependent on the following plaintext.
+03. [Some Ideas And Suggestions](./03-some-ideas-and-suggestions.html):
+    A discussion on possible ways to continue the solving, since for too long my attempts at finding more order in the ciphertext yielded no meaningful results.
+
+## Other Documents
+
+99. [Fruitless Experiments](./99-fruitless-experiments.html):
+    A collection of experiments meant to help with decryption of the unsolved Liber Primus sections, which did not result in meaningful advancement in solving the Liber Primus, but which were deemed worth archiving. Most contain only a brief description and code.
+98. [Work In Progress](./98-work-in-progress.html):
+    A document containing experiments which were yet not completely finished or concluded. It is mostly just a scratchpad to throw ideas into, so organization is minimal and messy. I would recommend not drudging through it if you don't have a good reason.

@@ -1,0 +1,68 @@
+---
+title: Word-based cipher
+format:
+    html:
+        code-fold: true
+---
+
+A bunch of ideas:
+- [ ] you can measure if distance of pairs has influence on their match rate (i bet it doesn't)
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append('..')
+from cryptext.cicada import liberprimus as lp, gematriaprimus as gp, futhorc
+from cryptext.analytics import ioc, expected_ioc, diff_text, crosstext_ioc
+
+from helperfunctions import find_phrase_groups, find_phrase_groups_strict, count_rune_matches
+```
+
+
+```{python}
+#| fig-align: center
+fig_title = 'Rune matches among phrase pairs\n(Sections of unsolved LP up to Mayfly only)'
+
+X = [7,6,5,4,3,2]
+length_X = range(50, 1, -1)
+length_pgroups = [ [] for _ in range(100) ]
+Yall, Yword, Yphrase = [], [], []
+
+
+
+for phrase_length in X:
+    for s in lp.load_unsolved().sections()[:-3]:
+        pgroups = find_phrase_groups_strict(s, phrase_length)
+        for pgroup in pgroups:
+            length = sum(len(w) for w in pgroup[0].words)
+            # if length > 22: continue
+
+            length_pgroups[length // 3].append(pgroup)
+
+for phrase_length in length_X:
+    stats = count_rune_matches(length_pgroups[phrase_length])
+    p,pm,a,m,wa,wm = stats.pairs, stats.first_word_nth_rune_matches[0], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    Yall.append(m / a if a > 0 else None)
+    Yword.append(wm / wa if wa > 0 else None)
+    Yphrase.append(pm / p if p > 0 else None)
+
+fig, ax = plt.subplots()
+
+ax.plot(length_X, Yall, label='Total match rate', marker='.')
+ax.plot(length_X, Yword, label='Word-start m. r.', marker='.')
+ax.plot(length_X, Yphrase, label='Phrase-start m. r.', marker='.')
+ax.axhline(1/29, color='#999999aa', label='Expected m. r.')
+
+ax.set_ylim(bottom=0)
+plt.gca().invert_xaxis()
+# ax.set_xticks(length_X)
+
+ax.xaxis.set_label_text('Phrase length in runes')
+ax.yaxis.set_label_text('Match rate')
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```

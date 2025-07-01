@@ -1,0 +1,346 @@
+---
+title: Autokey Component Hypothesis
+format:
+    html:
+        code-fold: true
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append('..')
+from cryptext.cicada import liberprimus as lp, gematriaprimus as gp, futhorc
+from cryptext.analytics import ioc, expected_ioc, diff_text, crosstext_ioc
+
+from helperfunctions import find_phrase_groups, find_phrase_groups_strict, count_rune_matches
+```
+
+From the last document, I have a solid reason to believe that the first letter in each word (at least in similar phrases by length) has a higher than usual chance to encrypt into the same letter. However, this still gives almost no clues to the actual mechanism behind the encryption, so let's try to find more order in the ciphertext here. In particular, I would like to test a hypothesis that part of the encryption relies on previous letters of plaintext (a property which I call an "autokey component").
+
+## Distilled Data
+
+Since the increased word-start match rate was established as unlikely to be caused by random chance, a good next step could be to try to exaggerate it by "distilling" the data to get as large dataset of good data for analysis as possible. Straight-out cherry-picking is likely a bad idea, but a selection of good candidate sections as well as a slight adjustment of parameters sounds reasonable.
+
+```{python}
+#| tbl-cap: Chosen target phrase groups and their rune matches
+
+target_pgroups = []
+
+data = []
+for section, min_phrase_len, distinctive_word_len in [
+    (lp.section_crosses(), 3, 5),
+    (lp.section_moebius(), 4, 5),
+    (lp.section_spiral_branches(), 5, 6),
+]:
+    pgroups = find_phrase_groups(section, min_phrase_len, distinctive_word_len)
+    target_pgroups += pgroups
+    stats = count_rune_matches(pgroups)
+    a,m,wa,wm = stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    data.append([
+        section.name().replace('Spiral ', 'Sp. '),
+        f'{min_phrase_len} words',
+        f'{distinctive_word_len} runes',
+        stats.pairs,
+        f'{m}/{a} (= 1/{a/m:.1f})' if m > 0 else 'None',
+        f'{wm}/{wa} (= 1/{wa/wm:.1f})' if wm > 0 else 'None',
+    ])
+
+pd.DataFrame(data, columns=['Section', 'Min phrase', 'Distinctive word len.', 'Phrase pairs', 'Match rate', 'Word-start m.r.'])
+```
+
+## Testing the Hypothesis
+
+To test the hypothesis, let's compare the probabilities that the phrase pairs match not just at the beginning of words, but at the beginning of whole phrases, as well as the first letters of last words in the phrases.
+
+Assuming the unsolved text has an autokey component, the matches should be lower at the start, and only increase in frequency deeper into the phrase (i.e. the 2nd or 3rd word); similarly, the last word match rate should be higher, since the letters before should be the same at that point. If the cipher does not have an autokey component, we should expect the same match rates as for all word beginnings, or maybe a little lower, if the plaintext under the cipher does not match for the entire phrase pair. However...
+
+```{python}
+#| tbl-cap: Match rates of first letters of first and last words of the chosen phrase groups
+
+# Discovered: 2025-05-13
+
+stats = count_rune_matches(target_pgroups)
+pairs, n_all, n_match, start_match, end_match = stats.pairs, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[0], stats.first_word_last_rune_matches
+
+data = [[
+    f'{n_match}/{n_all} (= 1/{n_all/n_match:.1f})' if m > 0 else 'None',
+    f'{start_match}/{pairs} (= 1/{pairs/start_match:.1f})' if start_match > 0 else 'None',
+    f'{end_match}/{pairs} (= 1/{pairs/end_match:.1f})' if end_match > 0 else 'None',
+]]
+
+pd.DataFrame(data, columns=['Total w.s. m.r.', 'Phrase-start m.r.', 'Phrase-last-word-start m.r.'])
+```
+
+The fact that the first word of the phrase is more likely to match than the others is... not what I expected. The only explanation I can think of is that, if the the autokey component exists, then the letter dependency is directed in the opposite direction, or in other words, the encryption is done *backwards* from the last word to the first.
+
+## Applying the Updated Hypothesis to the Unsolved LP
+
+Here is a table and a chart of phrase-start match-rates by sections:
+
+```{python}
+#| tbl-cap: Rune matches in same-length phrases (Unsolved LP by sections)
+
+# Discovered: 2025-05-13
+
+data = []
+for section in lp.load_unsolved().sections() + [ lp.section_the_loss_of_divinity() ]:
+    for min_phrase_length in [5,4,3,2]:
+        stats = count_rune_matches(find_phrase_groups(section, min_phrase_length))
+        p,a,m,wa,wm,pm = stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[0]
+        data.append([
+            section.name().replace('Spiral ', 'Sp. '),
+            f'{min_phrase_length} words',
+            p,
+            f'{m}/{a}' + (f' (= 1/{a/m:.1f})' if m > 0 else ''),
+            f'{wm}/{wa}' + (f' (= 1/{wa/wm:.1f})' if wm > 0 else ''),
+            f'{pm}/{p}' + (f' (= 1/{p/pm:.1f})' if (pm) > 0 else '')
+        ])
+
+pd.DataFrame(data, columns=['Section', 'Min phrase', 'Phrase pairs', 'Match rate', 'Word-start m.r.', 'Phrase-start m.r.'])
+```
+
+```{python}
+#| fig-align: center
+fig_title = 'Phrase-start rune matches among phrase pairs\n(Unsolved LP by sections)'
+
+fig, ax = plt.subplots()
+
+X = [7,6,5,4,3,2]
+
+for section in lp.load_unsolved().sections():
+    Yphrase = []
+
+    for min_phrase_length in X:
+        stats = count_rune_matches(find_phrase_groups(section, min_phrase_length))
+        p,a,m,wa,wm,pm = stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[0]
+
+        Yphrase.append(pm / p if p > 0 else None)
+
+    ax.plot(X, Yphrase, label=section.name().replace('Spiral ', 'Sp. '), marker='.')
+
+ax.axhline(1/29, color='#999999aa', label='Expected')
+
+ax.set_ylim(bottom=0)
+ax.set_xticks(X)
+plt.gca().invert_xaxis()
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.yaxis.set_label_text('Match rate')
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```
+
+```{python}
+#| fig-align: center
+fig_title = 'Phrase-start rune matches among phrase pairs\n(Unsolved LP by sections) - zoomed'
+
+fig, ax = plt.subplots()
+
+X = [5,4,3,2]
+
+for section in lp.load_unsolved().sections():
+    Yphrase = []
+
+    for min_phrase_length in X:
+        stats = count_rune_matches(find_phrase_groups(section, min_phrase_length))
+        p,a,m,wa,wm,pm = stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[0]
+
+        Yphrase.append(pm / p if p > 0 else None)
+
+    ax.plot(X, Yphrase, label=section.name().replace('Spiral ', 'Sp. '), marker='.')
+
+ax.axhline(1/29, color='#999999aa', label='Expected')
+
+ax.set_ylim(bottom=0, top=0.2)
+ax.set_xticks(X)
+plt.gca().invert_xaxis()
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.yaxis.set_label_text('Match rate')
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```
+
+For most of the 'good' sections (excluding Spiral Branches, interestingly enough) it holds that *phrase start m.r. > word start m.r.* (quite significantly).
+
+What's more, we can even extend the phrase match to length of 2 words (which, due to high false-positive rate, is extremely short for a phrase pair search!) and the phrase start match rate is still noticeably higher than expected (even in the case of some of the bad sections, like Spirals and Mayfly), which is quite a lot of resilience for such a metric. In fact, due to the sheer amount of phrase pairs of length 2, the relatively high match rates at phrase length 2 are probably the most significant finding in this chart.
+
+This is a very nice finding, because it heavily hints that letters beyond the next word after the encrypted one do not obfuscate the encrypted letter (at least not completely), which leads me to think that the furthest the autokey dependency reaches is the immediately following word, because if it was not (and I honestly cannot believe that I am saying this), then the match rates for phrase length 2 would not be *this good*.
+
+Regardless, the match rate is still too low for just the following word's influence to explain the variability (the match rate for plaintext can be seen with *The loss of divinity* in the above table for reference). Perhaps then it could be combined with some other cipher, like vigenere? It is even possible (due to the different behaviors of different sections, I would even say likely) that different sub-ciphers are used in different sections on top of whatever encryption method this experiment hints at. It is also possible that the autokey dependency is not word-sensitive, and instead has constant offset, which would mean that sometimes it reaches into the second word, and sometimes it does not.
+
+## Statistical Significance Test
+
+It may be better to measure the match rates using a "surprise" metric, specifically, how rare the match rate is when compared to match rates of random runes. This can also serve as a hypothesis test, where if the overall rarity is at least in the top 5%, we can assume the result is statistically significant (and therefore *"something's up"*).
+
+```{python}
+def measure_phrasestart_match_rate(sections, phraselen, strict = False):
+    if type(sections) is list:
+        pgroups = []
+        for s in sections:
+            if strict: pgroups += find_phrase_groups_strict(s, phraselen)
+            else: pgroups += find_phrase_groups(s, phraselen)
+    else:
+        if strict: pgroups = find_phrase_groups_strict(sections, phraselen)
+        else: pgroups = find_phrase_groups(sections, phraselen)
+
+    stats = count_rune_matches(pgroups)
+
+    return stats.first_word_nth_rune_matches[0] / stats.pairs
+
+sections = lp.load_unsolved().sections()
+target_mr = measure_phrasestart_match_rate(sections, 2) - 0.001
+section_target_mr = {
+    s.name(): measure_phrasestart_match_rate(s, 2) - 0.001
+    for s in sections
+}
+crosses_strict_target_mr = measure_phrasestart_match_rate(sections[0], 2, True) - 0.001
+
+total = 1000
+counter = 0
+section_counters = { s.name(): 0 for s in sections }
+crosses_strict_counter = 0
+
+for progress in range(total):
+    sections = lp.load_fake_unsolved().sections() #[:-3]
+
+    match_rate = measure_phrasestart_match_rate(sections, 2)
+    if match_rate >= target_mr: counter += 1
+
+    for s in sections:
+        match_rate = measure_phrasestart_match_rate(s, 2)
+        if match_rate >= section_target_mr[s.name()]: section_counters[s.name()] += 1
+
+    match_rate = measure_phrasestart_match_rate(sections[0], 2, True)
+    if match_rate >= crosses_strict_target_mr: crosses_strict_counter += 1
+
+    # print(f'Progress: {progress}/{total}', end='\r')
+
+print('Measuring phrase-start m.r. for phrases >= 2 words:')
+
+print(f'M.r. for all sections together is in the top {100 * counter/total:.1f}%.')
+
+for s in sections:
+    print(f'M.r. for "{s.name()}" is in the top {100 * section_counters[s.name()]/total:.1f}%.')
+
+print('Measuring phrase-start m.r. strictly for phrases == 2 words:')
+print(f'M.r. for "Crosses" is in the top {100 * crosses_strict_counter/total:.1f}%.')
+```
+
+The result for all sections is once again significant, so it indeed looks like something's up. As for individual sections, even if they are not always statistically significant on their own, all sections up to *Mayfly* have very good match rates (except for *Crosses* when measured using strict phrase pair finding method instead of the more advanced method; other sections don't have significantly different results), while for the last three sections the 2-word-phrase-start match rates seem mostly unremarkable. The *Moebius* section, in addition to having the longest phrase pairs and being the second-longest section, is also the top runner in terms of this metric.
+
+(**Note:** While this simulated approach to see the match rate percentages is important to make sure the method works in practice (which it may not due to some false assumptions or implementation errors), the percentages can be somewhat approximated using a probabilistic formula, which can be used to avoid long compute times. Without an in-depth explanation, the percentage is the probability that a measurement of a random variable with a distribution of *bin(1/29, PHRASE_PAIR_COUNT)* yields a value of at least *MATCH_COUNT*. For example, *Mayfly* has a match rate of 14/223, so using some [specialized calculator](https://www.gigacalculator.com/calculators/binomial-probability-calculator.php?solve=cdf&probability=1%2F29&trials=223&events=14&cdf=), we can calculate that it is approximately in the top 2.36%.)
+
+## Subset of Sections
+
+If we omit the last 3 sections and only include ones up to *Mayfly*, we get a much more visible advantage of phrase-start match rate to word-start match rate:
+
+```{python}
+#| tbl-cap: Rune matches in same-length phrases (Unsolved LP up to the end of Mayfly by sections, combined)
+
+data = []
+for min_phrase_length in [7, 6, 5, 4, 3, 2]:
+    pgroups = []
+    for s in lp.load_unsolved().sections()[:-3]:
+        pgroups += find_phrase_groups(s, min_phrase_length)
+    stats = count_rune_matches(pgroups)
+    p,pm,a,m,wa,wm = stats.pairs, stats.first_word_nth_rune_matches[0], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    data.append([
+        f'{min_phrase_length} words',
+        stats.pairs,
+        f'{m}/{a} (= 1/{a/m:.1f})' if m > 0 else f'0/{a}',
+        f'{wm}/{wa} (= 1/{wa/wm:.1f})' if wm > 0 else f'0/{wa}',
+        f'{pm}/{p} (= 1/{p/pm:.1f})' if pm > 0 else f'0/{p}',
+    ])
+
+pd.DataFrame(data, columns=['Min phrase', 'Phrase pairs', 'Match rate', 'Word-start m.r.', 'Phrase-start m.r.'])
+```
+
+```{python}
+#| fig-align: center
+fig_title = 'Rune matches among phrase pairs\n(Sections of unsolved LP up to Mayfly only)'
+
+X = [7,6,5,4,3,2]
+Yall, Yword, Yphrase = [], [], []
+
+for min_phrase_length in X:
+    pgroups = []
+    for s in lp.load_unsolved().sections()[:-3]:
+        pgroups += find_phrase_groups(s, min_phrase_length)
+    stats = count_rune_matches(pgroups)
+    p,pm,a,m,wa,wm = stats.pairs, stats.first_word_nth_rune_matches[0], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    Yall.append(m / a if a > 0 else None)
+    Yword.append(wm / wa if wa > 0 else None)
+    Yphrase.append(pm / p if p > 0 else None)
+
+fig, ax = plt.subplots()
+
+ax.plot(X, Yall, label='Total match rate', marker='.')
+ax.plot(X, Yword, label='Word-start m. r.', marker='.')
+ax.plot(X, Yphrase, label='Phrase-start m. r.', marker='.')
+ax.axhline(1/29, color='#999999aa', label='Expected m. r.')
+
+ax.set_ylim(bottom=0)
+plt.gca().invert_xaxis()
+ax.set_xticks(X)
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.yaxis.set_label_text('Match rate')
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```
+
+If we calculate the percentage in which the 2-word phrase length match rate is, we get that it is in the top [0.0002%](https://www.gigacalculator.com/calculators/binomial-probability-calculator.php?solve=cdf&probability=1%2F29&trials=1749&events=100&cdf=), which is almost one in a million. The simulated testing is not useful here, because it would likely have to run a million iterations to get a single positive result, which would take way too much computing time (at times like these some may regret that I don't have a C++ implementation).
+
+## What About Spiral Branches?
+
+Spiral Branches is one of the good sections when measured using word-start match rate, so why then is it not also one of the good sections when measured using phrase-start match rate (as is the case for the other good sections)?
+
+The match rate for phrase starts is never much higher than the word match rate, even when tweaking some parameters, such as the distinctive word length (which also sometimes worsens other statistics, which is not very nice).
+
+One explanation is that the section is too long and talks about too many things, which results in too many false positives. This could potentially be "fixed" by cutting the section into parts (assuming that similar content is mentioned in close proximity), but since this is not confirmed, I am not comfortable with it, since it could give us too much freedom to form patterns ourselves and see things that are not there.
+
+Another explanation is that an "autokey component" is simply not present in this section; after all, the beginnings of both the first and last words are "mostly the same, and sometimes slightly lower", which makes sense given the possibility of a partially false-positive phrase pair. It also perhaps makes sense that the "last" section (barring *An end* and *Parable*), which also in its illustrations represents a combination of earlier sections (*Spirals* + *Branches*), would be meant to be solved later. Still, this is just speculation.
+
+~~And another option is that the hypotheses I made are all wrong and I don't really understand how it works at all.~~
+
+```{python}
+#| fig-align: center
+fig_title = 'Rune matches among phrase pairs\n(Spiral Branches section)'
+
+X = [5,4,3,2]
+Yall, Yword, Yphrase = [], [], []
+
+for min_phrase_length in X:
+    pgroups = []
+    for s in lp.load_unsolved().sections()[-1:]:
+        pgroups += find_phrase_groups_strict(s, min_phrase_length, 5)
+    stats = count_rune_matches(pgroups)
+    p,pm,a,m,wa,wm = stats.pairs, stats.first_word_nth_rune_matches[0], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    Yall.append(m / a if a > 0 else None)
+    Yword.append(wm / wa if wa > 0 else None)
+    Yphrase.append(pm / p if p > 0 else None)
+
+fig, ax = plt.subplots()
+
+ax.plot(X, Yall, label='Total match rate', marker='.')
+ax.plot(X, Yword, label='Word-start m. r.', marker='.')
+ax.plot(X, Yphrase, label='Phrase-start m. r.', marker='.')
+ax.axhline(1/29, color='#999999aa', label='Expected m. r.')
+
+ax.set_ylim(bottom=0)
+plt.gca().invert_xaxis()
+ax.set_xticks(X)
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.yaxis.set_label_text('Match rate')
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```

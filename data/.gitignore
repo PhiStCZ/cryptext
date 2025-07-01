@@ -1,0 +1,4 @@
+*.csv
+*.txt
+*.bak
+!liber-primus-transcription-transformed.txt

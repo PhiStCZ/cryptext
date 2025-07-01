@@ -1,0 +1,232 @@
+---
+title: Repeated Phrases by Word Length
+format:
+    html:
+        code-fold: true
+---
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append('..')
+from cryptext.cicada import liberprimus as lp
+
+from helperfunctions import find_phrase_groups, find_phrase_groups_strict, count_rune_matches
+```
+
+Unlike the letter distribution, which appears completely random except for low doublets, word lengths in the Liber Primus show some amount of order; in fact, the solved sections and the formatting of the unsolved ones indicate that word boundaries are identical to those in the plaintext. This document attempts to exploit this property (assuming it holds, of course) to better understand the used cipher.
+
+One way to exploit known word boundaries is cribbing, which is very useful and has helped in the past, but here I will do something different - compare *"phrase pairs"*, i.e. pairs of phrases with words of the same length (or more generally phrase groups, if more than two same-wordlength phrases are found).
+
+Assuming some amount of repetition, phrases with words of the same length are likely to be the same phrase, giving us another view on how the same plaintext may be encrypted. Liber Primus (at least its solved part) also does contain some of the needed repetition, with phrases like *"Who are you who wishes to study here"* or *"You are a [being/law] upon yourself"*.
+
+## Searching Method
+
+Let us try to find phrase groups in the unsolved sections. Of course, only distinguishing phrases by lengths of their words may lead to a large number of false positives. Therefore it may be a good idea to filter out phrases unlikely to be the same:
+
+1. Phrases across multiple sentences (especially if sentence boundaries are in different places for each phrase)
+2. Phrases which don't contain any *"sufficiently long"* words (longer words are more distinctive than shorter ones)
+3. Phrases that are *"too short"* (how short is too much is not well defined, but 4 words and less are likely not too useful)
+4. Phrases from different sections (different sections probably talk about different things, and may even be encrypted differently).
+
+To further reduce the dependencies between different phrase pairs, the main variant of the search function also deduplicates (removes) some phrase groups; the best description is the code itself, but in a nutshell, a phrase group is deduplicated if it is fully covered by some larger phrase group with longer phrases.
+
+## Longest Matches
+
+For now let's look at the longest phrase groups in the unsolved sections:
+
+```{python}
+
+# Discovered: 2024-09; yeah that's right, I was sitting on my ass with this for 9 months, unaware of its significance; I even put a note which said that matches seem to be quite common at the start of words but didn't pick the right method to investigate (when the simplest method would have sufficed)
+
+for section in lp.load_unsolved().sections():
+    for pgroup in find_phrase_groups(section, 7):
+        print(f'@ {section.name()} (section length {len(section.symbols())} runes):')
+        for phrase in pgroup:
+            print(f'"{phrase.content()}"')
+        print()
+```
+
+There are two 7-word pairs, which is okay, although quite a bit less than I expected given the solved sections. Both of the matches are from the Moebius section, which is interesting considering the Spiral Branches section has no pairs of this length and yet is much longer.
+
+Furthermore, despite the matched pairs being technically different, one match of both pairs is the same phrase in the same place (note the word **ᛖᛉᚦᛗᚪᛋᛉ**), so all four (or three... and a half) phrases from Moebius could contain similar words.
+
+You may have also noticed that one of the pairs matches several runes - 4 out of 26, which is more than four times the expected rate for random text (1 out of 29). Three of those matches are also from the beginning of a word, which may be significant.
+
+## Rune Matching Statistics
+
+Let us now match runes of phrase pairs of potentially shorter lengths (which should result in a larger amount of data). For each matched phrase pair or group, we shall compare their runes and report the fraction of runes that matched, as well as the fraction of runes *at the beginning of words* that matched.
+
+```{python}
+#| tbl-cap: Rune matches among phrase pairs (Sections of unsolved LP)
+
+# Discovered: 2025-05 (beginning of month, maybe 9th?)
+
+data = []
+for min_phrase_length in [7, 6, 5, 4]:
+    pgroups = []
+    for s in lp.load_unsolved().sections():
+        pgroups += find_phrase_groups(s, min_phrase_length)
+    stats = count_rune_matches(pgroups)
+    a,m,wa,wm = stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    data.append([
+        f'{min_phrase_length} words',
+        stats.pairs,
+        f'{m}/{a} (= 1/{a/m:.1f})' if m > 0 else f'0/{a}',
+        f'{wm}/{wa} (= 1/{wa/wm:.1f})' if wm > 0 else f'0/{wa}',
+    ])
+
+pd.DataFrame(data, columns=['Min phrase', 'Phrase pairs', 'Match rate', 'Word-start m.r.'])
+```
+
+```{python}
+#| fig-align: center
+fig_title = 'Rune matches among phrase pairs (Sections of unsolved LP)'
+
+X = [7,6,5,4]
+Yall, Yword = [], []
+
+for min_phrase_length in X:
+    pgroups = []
+    for s in lp.load_unsolved().sections():
+        pgroups += find_phrase_groups(s, min_phrase_length)
+    stats = count_rune_matches(pgroups)
+    a,m,wa,wm = stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+    Yall.append(m / a)
+    Yword.append(wm / wa)
+
+fig, ax = plt.subplots()
+
+ax.plot(X, Yall, label='Total phrase pair match rate', marker='.')
+ax.plot(X, Yword, label='Word-start phrase pair m. r.', marker='.')
+ax.axhline(1/29, color='#999999aa', label='Expected m. r.')
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.invert_xaxis()
+ax.set_xticks(X)
+ax.yaxis.set_label_text('Match rate')
+ax.set_ylim(bottom=0)
+
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```
+
+It is visible from the tables that rune match rate at the first letter of a word is consistently and quite significantly higher than in the rest of the word. This being intentional is not *undeniable*, it is still technically possible that this was caused by nothing more than random chance, *however*, the pattern is consistent enough accross many measurements, and even remains (to an extent) when the most pronounced example (the 7 word match from Moebius) is removed. It is also notable that a significant portion of matched phrases or parts of phrases may be false positives, i.e. not actually being the same word, so they only introduce noise into the equation. That the pattern shows despite this, does say something.
+
+This has big implications to the nature of the cipher, as the cipher state seems to depend on the first letters of each word, or on words in general, otherwise such a big correlation between word index and rune match probability would not exist.
+
+## Per-section Statistics
+
+Finally, let's look from a closer perspective, by section:
+
+```{python}
+#| tbl-cap: Rune matches among phrase pairs (Unsolved LP by sections)
+
+data = []
+for section in lp.load_unsolved().sections():
+    for min_phrase_length in [5,4,3,2]:
+        stats = count_rune_matches(find_phrase_groups_strict(section, min_phrase_length))
+        a,m,wa,wm = stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+        data.append([
+            section.name().replace('Spiral ', 'Sp. '),
+            f'{min_phrase_length} words',
+            stats.pairs,
+            f'{m}/{a} (= 1/{a/m:.1f})' if m > 0 else f'0/{a}',
+            f'{wm}/{wa} (= 1/{wa/wm:.1f})' if wm > 0 else f'0/{wa}',
+        ])
+
+pd.DataFrame(data, columns=['Section', 'Min phrase', 'Phrase pairs', 'Match rate', 'Word-start m.r.'])
+```
+
+```{python}
+#| fig-align: center
+fig_title = 'Word-start rune matches among phrase pairs (Unsolved LP by sections)'
+
+X = [5,4,3,2]
+
+fig, ax = plt.subplots()
+
+for section in lp.load_unsolved().sections():
+    Yword = []
+
+    for min_phrase_length in X:
+        stats = count_rune_matches(find_phrase_groups(section, min_phrase_length))
+        a,m,wa,wm = stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches
+
+        Yword.append(wm / wa if wa  > 0 else None)
+
+    ax.plot(X, Yword, label=section.name(), marker='.')
+
+ax.axhline(1/29, color='#999999aa', label='Expected')
+
+ax.xaxis.set_label_text('Minimum phrase length in words')
+ax.invert_xaxis()
+ax.set_xticks(X)
+ax.yaxis.set_label_text('Match rate')
+ax.set_ylim(bottom=0)
+
+ax.legend()
+ax.set_title(fig_title)
+plt.show()
+```
+
+From this it's visible that different sections behave differently. There are several *'good'* sections (i.e. Crosses, Moebius, and Spiral Branches), where the word-start match rate is noticeably higher than expected (also note that Spiral Branches and Moebius are the longest unsolved sections), and *'bad'* sections, showing mostly the opposite (at least for larger phrase lengths).
+
+This may not neccessarily indicate that they are encrypted differently (perhaps this lies only with too high false positive rate of phrase pairs), but it *might*, which may be why solving by section instead of solving everything together may be better, and why the *'good'* sections are probably a good place to start if we want to find more patterns.
+
+There is also an interesting pattern in that even most *'bad'* sections seem to have an increasing trend of word-start match rate as minimum phrase length decreases, and the increase is strong enough that in 2-word phrases, the match rate is not only above expectation, but sometimes even be the highest among all sections, which not what one might expect, as with shorter phrases there is likely a lot of noise produced by false positives.
+
+----------
+
+## Appendix 1: All Matches
+
+The code should at some point be available for anyone to run for themselves, but for convenience / quick peek, here are all in-section matches of length at least 5:
+
+```{python}
+for section in lp.load_unsolved().sections():# + [ lp.load_unsolved() ]:
+    print(f'@ {section.name()} (section length {len(section.symbols())} runes):')
+    for pgroup in find_phrase_groups(section, 5):
+        for phrase in pgroup:
+            print(f'"{phrase.content()}"')
+        print()
+    print()
+```
+
+## Appendix 2: Statistical Significance
+
+Finally, to ease my mind and not feel that this is just not just a "the paranoid schizophrenic has found a pattern in the numbers" moment, I did some statistical testing to see how rare would some of the measurements be; e.g. compare the gathered data to data gathered from randomly distributed runes (with low doublets) and see in which percentile the gathered data is, where a good result is one at least in the top 5%. The results are sufficient, and quite satisfying.
+
+```{python}
+def measure_wordstart_match_rate(sections, phraselen):
+    pgroups = []
+    for s in sections:
+        pgroups += find_phrase_groups(s, phraselen)
+    stats = count_rune_matches(pgroups)
+
+    return stats.word_begin_matches / stats.words
+
+sections = lp.load_unsolved().sections()
+target_mr_7 = measure_wordstart_match_rate(sections, 7) - 0.001
+target_mr_5 = measure_wordstart_match_rate(sections, 5) - 0.001
+
+total = 1000
+counter7 = 0
+counter5 = 0
+
+for progress in range(total):
+    sections = lp.load_fake_unsolved().sections()
+
+    match_rate = measure_wordstart_match_rate(sections, 7)
+    if match_rate >= target_mr_7: counter7 += 1
+
+    match_rate = measure_wordstart_match_rate(sections, 5)
+    if match_rate >= target_mr_5: counter5 += 1
+
+    # print(f'Progress: {progress}/{total}', end='\r')
+
+print(f'Word-start m.r. for phrases >= 7 words is in the top {100 * counter7/total:.1f}%.')
+print(f'Word-start m.r. for phrases >= 5 words is in the top {100 * counter5/total:.1f}%.')
+```
