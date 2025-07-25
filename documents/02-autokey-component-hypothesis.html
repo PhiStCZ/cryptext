@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Autokey Component Hypothesis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="02-autokey-component-hypothesis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="02-autokey-component-hypothesis_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="02-autokey-component-hypothesis_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="02-autokey-component-hypothesis_files/libs/quarto-html/popper.min.js"></script>
+<script src="02-autokey-component-hypothesis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="02-autokey-component-hypothesis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="02-autokey-component-hypothesis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="02-autokey-component-hypothesis_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="02-autokey-component-hypothesis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="02-autokey-component-hypothesis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="02-autokey-component-hypothesis_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Autokey Component Hypothesis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="a143f24c" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">'..'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cryptext.cicada <span class="im">import</span> liberprimus <span class="im">as</span> lp, gematriaprimus <span class="im">as</span> gp, futhorc</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cryptext.analytics <span class="im">import</span> ioc, expected_ioc, diff_text, crosstext_ioc</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> helperfunctions <span class="im">import</span> find_phrase_groups, find_phrase_groups_strict, count_rune_matches</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>From the last document, I have a solid reason to believe that the first letter in each word (at least in similar phrases by length) has a higher than usual chance to encrypt into the same letter. However, this still gives almost no clues to the actual mechanism behind the encryption, so let’s try to find more order in the ciphertext here. In particular, I would like to test a hypothesis that part of the encryption relies on previous letters of plaintext (a property which I call an “autokey component”).</p>
+<section id="distilled-data" class="level2">
+<h2 class="anchored" data-anchor-id="distilled-data">Distilled Data</h2>
+<p>Since the increased word-start match rate was established as unlikely to be caused by random chance, a good next step could be to try to exaggerate it by “distilling” the data to get as large dataset of good data for analysis as possible. Straight-out cherry-picking is likely a bad idea, but a selection of good candidate sections as well as a slight adjustment of parameters sounds reasonable.</p>
+<div class="cell" data-tbl-cap="Chosen target phrase groups and their rune matches" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>target_pgroups <span class="op">=</span> []</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> section, min_phrase_len, distinctive_word_len <span class="kw">in</span> [</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    (lp.section_crosses(), <span class="dv">3</span>, <span class="dv">5</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    (lp.section_moebius(), <span class="dv">4</span>, <span class="dv">5</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    (lp.section_spiral_branches(), <span class="dv">5</span>, <span class="dv">6</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>]:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    pgroups <span class="op">=</span> find_phrase_groups(section, min_phrase_len, distinctive_word_len)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    target_pgroups <span class="op">+=</span> pgroups</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> count_rune_matches(pgroups)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    a,m,wa,wm <span class="op">=</span> stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    data.append([</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        section.name().replace(<span class="st">'Spiral '</span>, <span class="st">'Sp. '</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>min_phrase_len<span class="sc">}</span><span class="ss"> words'</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>distinctive_word_len<span class="sc">}</span><span class="ss"> runes'</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        stats.pairs,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>a<span class="op">/</span>m<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> m <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'None'</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>wm<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>wa<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>wa<span class="op">/</span>wm<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> wm <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'None'</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Section'</span>, <span class="st">'Min phrase'</span>, <span class="st">'Distinctive word len.'</span>, <span class="st">'Phrase pairs'</span>, <span class="st">'Match rate'</span>, <span class="st">'Word-start m.r.'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<caption>Chosen target phrase groups and their rune matches</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Section</th>
+<th data-quarto-table-cell-role="th">Min phrase</th>
+<th data-quarto-table-cell-role="th">Distinctive word len.</th>
+<th data-quarto-table-cell-role="th">Phrase pairs</th>
+<th data-quarto-table-cell-role="th">Match rate</th>
+<th data-quarto-table-cell-role="th">Word-start m.r.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Crosses</td>
+<td>3 words</td>
+<td>5 runes</td>
+<td>10</td>
+<td>7/142 (= 1/20.3)</td>
+<td>3/32 (= 1/10.7)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Moebius</td>
+<td>4 words</td>
+<td>5 runes</td>
+<td>18</td>
+<td>15/314 (= 1/20.9)</td>
+<td>7/83 (= 1/11.9)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Sp. Branches</td>
+<td>5 words</td>
+<td>6 runes</td>
+<td>8</td>
+<td>11/153 (= 1/13.9)</td>
+<td>4/40 (= 1/10.0)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="testing-the-hypothesis" class="level2">
+<h2 class="anchored" data-anchor-id="testing-the-hypothesis">Testing the Hypothesis</h2>
+<p>To test the hypothesis, let’s compare the probabilities that the phrase pairs match not just at the beginning of words, but at the beginning of whole phrases, as well as the first letters of last words in the phrases.</p>
+<p>Assuming the unsolved text has an autokey component, the matches should be lower at the start, and only increase in frequency deeper into the phrase (i.e.&nbsp;the 2nd or 3rd word); similarly, the last word match rate should be higher, since the letters before should be the same at that point. If the cipher does not have an autokey component, we should expect the same match rates as for all word beginnings, or maybe a little lower, if the plaintext under the cipher does not match for the entire phrase pair. However…</p>
+<div class="cell" data-tbl-cap="Match rates of first letters of first and last words of the chosen phrase groups" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Discovered: 2025-05-13</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>stats <span class="op">=</span> count_rune_matches(target_pgroups)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pairs, n_all, n_match, start_match, end_match <span class="op">=</span> stats.pairs, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[<span class="dv">0</span>], stats.first_word_last_rune_matches</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [[</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>n_match<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>n_all<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>n_all<span class="op">/</span>n_match<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> m <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'None'</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>start_match<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>pairs<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>pairs<span class="op">/</span>start_match<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> start_match <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'None'</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>end_match<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>pairs<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>pairs<span class="op">/</span>end_match<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> end_match <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'None'</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>]]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Total w.s. m.r.'</span>, <span class="st">'Phrase-start m.r.'</span>, <span class="st">'Phrase-last-word-start m.r.'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<caption>Match rates of first letters of first and last words of the chosen phrase groups</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Total w.s. m.r.</th>
+<th data-quarto-table-cell-role="th">Phrase-start m.r.</th>
+<th data-quarto-table-cell-role="th">Phrase-last-word-start m.r.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>14/155 (= 1/11.1)</td>
+<td>6/36 (= 1/6.0)</td>
+<td>1/36 (= 1/36.0)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>The fact that the first word of the phrase is more likely to match than the others is… not what I expected. The only explanation I can think of is that, if the the autokey component exists, then the letter dependency is directed in the opposite direction, or in other words, the encryption is done <em>backwards</em> from the last word to the first.</p>
+</section>
+<section id="applying-the-updated-hypothesis-to-the-unsolved-lp" class="level2">
+<h2 class="anchored" data-anchor-id="applying-the-updated-hypothesis-to-the-unsolved-lp">Applying the Updated Hypothesis to the Unsolved LP</h2>
+<p>Here is a table and a chart of phrase-start match-rates by sections:</p>
+<div class="cell" data-tbl-cap="Rune matches in same-length phrases (Unsolved LP by sections)" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Discovered: 2025-05-13</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> section <span class="kw">in</span> lp.load_unsolved().sections() <span class="op">+</span> [ lp.section_the_loss_of_divinity() ]:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> min_phrase_length <span class="kw">in</span> [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>]:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> count_rune_matches(find_phrase_groups(section, min_phrase_length))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        p,a,m,wa,wm,pm <span class="op">=</span> stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[<span class="dv">0</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        data.append([</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            section.name().replace(<span class="st">'Spiral '</span>, <span class="st">'Sp. '</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>min_phrase_length<span class="sc">}</span><span class="ss"> words'</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            p,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">'</span> <span class="op">+</span> (<span class="ss">f' (= 1/</span><span class="sc">{</span>a<span class="op">/</span>m<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> m <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">''</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>wm<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>wa<span class="sc">}</span><span class="ss">'</span> <span class="op">+</span> (<span class="ss">f' (= 1/</span><span class="sc">{</span>wa<span class="op">/</span>wm<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> wm <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">''</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>pm<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">'</span> <span class="op">+</span> (<span class="ss">f' (= 1/</span><span class="sc">{</span>p<span class="op">/</span>pm<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> (pm) <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">''</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Section'</span>, <span class="st">'Min phrase'</span>, <span class="st">'Phrase pairs'</span>, <span class="st">'Match rate'</span>, <span class="st">'Word-start m.r.'</span>, <span class="st">'Phrase-start m.r.'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<caption>Rune matches in same-length phrases (Unsolved LP by sections)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Section</th>
+<th data-quarto-table-cell-role="th">Min phrase</th>
+<th data-quarto-table-cell-role="th">Phrase pairs</th>
+<th data-quarto-table-cell-role="th">Match rate</th>
+<th data-quarto-table-cell-role="th">Word-start m.r.</th>
+<th data-quarto-table-cell-role="th">Phrase-start m.r.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Crosses</td>
+<td>5 words</td>
+<td>0</td>
+<td>0/0</td>
+<td>0/0</td>
+<td>0/0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Crosses</td>
+<td>4 words</td>
+<td>2</td>
+<td>1/36 (= 1/36.0)</td>
+<td>1/8 (= 1/8.0)</td>
+<td>1/2 (= 1/2.0)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Crosses</td>
+<td>3 words</td>
+<td>10</td>
+<td>7/142 (= 1/20.3)</td>
+<td>3/32 (= 1/10.7)</td>
+<td>3/10 (= 1/3.3)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Crosses</td>
+<td>2 words</td>
+<td>89</td>
+<td>38/917 (= 1/24.1)</td>
+<td>7/190 (= 1/27.1)</td>
+<td>7/89 (= 1/12.7)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Spirals</td>
+<td>5 words</td>
+<td>1</td>
+<td>0/20</td>
+<td>0/5</td>
+<td>0/1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Spirals</td>
+<td>4 words</td>
+<td>8</td>
+<td>4/143 (= 1/35.8)</td>
+<td>1/33 (= 1/33.0)</td>
+<td>0/8</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Spirals</td>
+<td>3 words</td>
+<td>52</td>
+<td>25/723 (= 1/28.9)</td>
+<td>6/165 (= 1/27.5)</td>
+<td>2/52 (= 1/26.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>Spirals</td>
+<td>2 words</td>
+<td>286</td>
+<td>120/2992 (= 1/24.9)</td>
+<td>31/633 (= 1/20.4)</td>
+<td>17/286 (= 1/16.8)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>Branches</td>
+<td>5 words</td>
+<td>0</td>
+<td>0/0</td>
+<td>0/0</td>
+<td>0/0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>Branches</td>
+<td>4 words</td>
+<td>5</td>
+<td>2/80 (= 1/40.0)</td>
+<td>1/20 (= 1/20.0)</td>
+<td>0/5</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>Branches</td>
+<td>3 words</td>
+<td>57</td>
+<td>21/767 (= 1/36.5)</td>
+<td>4/176 (= 1/44.0)</td>
+<td>2/57 (= 1/28.5)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>Branches</td>
+<td>2 words</td>
+<td>453</td>
+<td>150/4594 (= 1/30.6)</td>
+<td>35/968 (= 1/27.7)</td>
+<td>23/453 (= 1/19.7)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>Moebius</td>
+<td>5 words</td>
+<td>7</td>
+<td>9/141 (= 1/15.7)</td>
+<td>6/39 (= 1/6.5)</td>
+<td>2/7 (= 1/3.5)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>Moebius</td>
+<td>4 words</td>
+<td>18</td>
+<td>15/314 (= 1/20.9)</td>
+<td>7/83 (= 1/11.9)</td>
+<td>2/18 (= 1/9.0)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>Moebius</td>
+<td>3 words</td>
+<td>112</td>
+<td>65/1499 (= 1/23.1)</td>
+<td>20/365 (= 1/18.2)</td>
+<td>8/112 (= 1/14.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15</td>
+<td>Moebius</td>
+<td>2 words</td>
+<td>698</td>
+<td>252/6934 (= 1/27.5)</td>
+<td>62/1537 (= 1/24.8)</td>
+<td>39/698 (= 1/17.9)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">16</td>
+<td>Mayfly</td>
+<td>5 words</td>
+<td>0</td>
+<td>0/0</td>
+<td>0/0</td>
+<td>0/0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">17</td>
+<td>Mayfly</td>
+<td>4 words</td>
+<td>4</td>
+<td>3/67 (= 1/22.3)</td>
+<td>0/16</td>
+<td>0/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">18</td>
+<td>Mayfly</td>
+<td>3 words</td>
+<td>33</td>
+<td>23/465 (= 1/20.2)</td>
+<td>4/103 (= 1/25.8)</td>
+<td>1/33 (= 1/33.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">19</td>
+<td>Mayfly</td>
+<td>2 words</td>
+<td>223</td>
+<td>91/2301 (= 1/25.3)</td>
+<td>21/483 (= 1/23.0)</td>
+<td>14/223 (= 1/15.9)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">20</td>
+<td>Wing Tree</td>
+<td>5 words</td>
+<td>1</td>
+<td>0/16</td>
+<td>0/5</td>
+<td>0/1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">21</td>
+<td>Wing Tree</td>
+<td>4 words</td>
+<td>8</td>
+<td>6/132 (= 1/22.0)</td>
+<td>2/33 (= 1/16.5)</td>
+<td>0/8</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">22</td>
+<td>Wing Tree</td>
+<td>3 words</td>
+<td>51</td>
+<td>14/703 (= 1/50.2)</td>
+<td>2/162 (= 1/81.0)</td>
+<td>0/51</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23</td>
+<td>Wing Tree</td>
+<td>2 words</td>
+<td>399</td>
+<td>116/4065 (= 1/35.0)</td>
+<td>26/858 (= 1/33.0)</td>
+<td>13/399 (= 1/30.7)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">24</td>
+<td>Cuneiform</td>
+<td>5 words</td>
+<td>1</td>
+<td>0/17</td>
+<td>0/5</td>
+<td>0/1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">25</td>
+<td>Cuneiform</td>
+<td>4 words</td>
+<td>10</td>
+<td>6/164 (= 1/27.3)</td>
+<td>1/41 (= 1/41.0)</td>
+<td>0/10</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">26</td>
+<td>Cuneiform</td>
+<td>3 words</td>
+<td>99</td>
+<td>52/1296 (= 1/24.9)</td>
+<td>13/308 (= 1/23.7)</td>
+<td>4/99 (= 1/24.8)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">27</td>
+<td>Cuneiform</td>
+<td>2 words</td>
+<td>636</td>
+<td>232/6221 (= 1/26.8)</td>
+<td>57/1382 (= 1/24.2)</td>
+<td>24/636 (= 1/26.5)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">28</td>
+<td>Sp. Branches</td>
+<td>5 words</td>
+<td>12</td>
+<td>13/225 (= 1/17.3)</td>
+<td>5/60 (= 1/12.0)</td>
+<td>1/12 (= 1/12.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">29</td>
+<td>Sp. Branches</td>
+<td>4 words</td>
+<td>53</td>
+<td>40/891 (= 1/22.3)</td>
+<td>12/224 (= 1/18.7)</td>
+<td>3/53 (= 1/17.7)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">30</td>
+<td>Sp. Branches</td>
+<td>3 words</td>
+<td>377</td>
+<td>206/5104 (= 1/24.8)</td>
+<td>53/1196 (= 1/22.6)</td>
+<td>17/377 (= 1/22.2)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">31</td>
+<td>Sp. Branches</td>
+<td>2 words</td>
+<td>2380</td>
+<td>912/24351 (= 1/26.7)</td>
+<td>200/5202 (= 1/26.0)</td>
+<td>92/2380 (= 1/25.9)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">32</td>
+<td>The Loss Of Divinity</td>
+<td>5 words</td>
+<td>2</td>
+<td>43/51 (= 1/1.2)</td>
+<td>13/15 (= 1/1.2)</td>
+<td>1/2 (= 1/2.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">33</td>
+<td>The Loss Of Divinity</td>
+<td>4 words</td>
+<td>5</td>
+<td>86/100 (= 1/1.2)</td>
+<td>23/27 (= 1/1.2)</td>
+<td>4/5 (= 1/1.2)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">34</td>
+<td>The Loss Of Divinity</td>
+<td>3 words</td>
+<td>29</td>
+<td>170/397 (= 1/2.3)</td>
+<td>45/99 (= 1/2.2)</td>
+<td>13/29 (= 1/2.2)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">35</td>
+<td>The Loss Of Divinity</td>
+<td>2 words</td>
+<td>113</td>
+<td>359/1125 (= 1/3.1)</td>
+<td>93/267 (= 1/2.9)</td>
+<td>39/113 (= 1/2.9)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="20d0a939" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig_title <span class="op">=</span> <span class="st">'Phrase-start rune matches among phrase pairs</span><span class="ch">\n</span><span class="st">(Unsolved LP by sections)'</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> [<span class="dv">7</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> section <span class="kw">in</span> lp.load_unsolved().sections():</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    Yphrase <span class="op">=</span> []</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> min_phrase_length <span class="kw">in</span> X:</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> count_rune_matches(find_phrase_groups(section, min_phrase_length))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        p,a,m,wa,wm,pm <span class="op">=</span> stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[<span class="dv">0</span>]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        Yphrase.append(pm <span class="op">/</span> p <span class="cf">if</span> p <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    ax.plot(X, Yphrase, label<span class="op">=</span>section.name().replace(<span class="st">'Spiral '</span>, <span class="st">'Sp. '</span>), marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span><span class="op">/</span><span class="dv">29</span>, color<span class="op">=</span><span class="st">'#999999aa'</span>, label<span class="op">=</span><span class="st">'Expected'</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(bottom<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(X)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_xaxis()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_label_text(<span class="st">'Minimum phrase length in words'</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_label_text(<span class="st">'Match rate'</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>ax.set_title(fig_title)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-autokey-component-hypothesis_files/figure-html/cell-6-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="e291cbdb" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig_title <span class="op">=</span> <span class="st">'Phrase-start rune matches among phrase pairs</span><span class="ch">\n</span><span class="st">(Unsolved LP by sections) - zoomed'</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> section <span class="kw">in</span> lp.load_unsolved().sections():</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    Yphrase <span class="op">=</span> []</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> min_phrase_length <span class="kw">in</span> X:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        stats <span class="op">=</span> count_rune_matches(find_phrase_groups(section, min_phrase_length))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        p,a,m,wa,wm,pm <span class="op">=</span> stats.pairs, stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches, stats.first_word_nth_rune_matches[<span class="dv">0</span>]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        Yphrase.append(pm <span class="op">/</span> p <span class="cf">if</span> p <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ax.plot(X, Yphrase, label<span class="op">=</span>section.name().replace(<span class="st">'Spiral '</span>, <span class="st">'Sp. '</span>), marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span><span class="op">/</span><span class="dv">29</span>, color<span class="op">=</span><span class="st">'#999999aa'</span>, label<span class="op">=</span><span class="st">'Expected'</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(bottom<span class="op">=</span><span class="dv">0</span>, top<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(X)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_xaxis()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_label_text(<span class="st">'Minimum phrase length in words'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_label_text(<span class="st">'Match rate'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>ax.set_title(fig_title)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-autokey-component-hypothesis_files/figure-html/cell-7-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For most of the ‘good’ sections (excluding Spiral Branches, interestingly enough) it holds that <em>phrase start m.r. &gt; word start m.r.</em> (quite significantly).</p>
+<p>What’s more, we can even extend the phrase match to length of 2 words (which, due to high false-positive rate, is extremely short for a phrase pair search!) and the phrase start match rate is still noticeably higher than expected (even in the case of some of the bad sections, like Spirals and Mayfly), which is quite a lot of resilience for such a metric. In fact, due to the sheer amount of phrase pairs of length 2, the relatively high match rates at phrase length 2 are probably the most significant finding in this chart.</p>
+<p>This is a very nice finding, because it heavily hints that letters beyond the next word after the encrypted one do not obfuscate the encrypted letter (at least not completely), which leads me to think that the furthest the autokey dependency reaches is the immediately following word, because if it was not (and I honestly cannot believe that I am saying this), then the match rates for phrase length 2 would not be <em>this good</em>.</p>
+<p>Regardless, the match rate is still too low for just the following word’s influence to explain the variability (the match rate for plaintext can be seen with <em>The loss of divinity</em> in the above table for reference). Perhaps then it could be combined with some other cipher, like vigenere? It is even possible (due to the different behaviors of different sections, I would even say likely) that different sub-ciphers are used in different sections on top of whatever encryption method this experiment hints at. It is also possible that the autokey dependency is not word-sensitive, and instead has constant offset, which would mean that sometimes it reaches into the second word, and sometimes it does not.</p>
+</section>
+<section id="statistical-significance-test" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-significance-test">Statistical Significance Test</h2>
+<p>It may be better to measure the match rates using a “surprise” metric, specifically, how rare the match rate is when compared to match rates of random runes. This can also serve as a hypothesis test, where if the overall rarity is at least in the top 5%, we can assume the result is statistically significant (and therefore <em>“something’s up”</em>).</p>
+<div id="75df9494" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> measure_phrasestart_match_rate(sections, phraselen, strict <span class="op">=</span> <span class="va">False</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">type</span>(sections) <span class="kw">is</span> <span class="bu">list</span>:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        pgroups <span class="op">=</span> []</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> sections:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> strict: pgroups <span class="op">+=</span> find_phrase_groups_strict(s, phraselen)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>: pgroups <span class="op">+=</span> find_phrase_groups(s, phraselen)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> strict: pgroups <span class="op">=</span> find_phrase_groups_strict(sections, phraselen)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>: pgroups <span class="op">=</span> find_phrase_groups(sections, phraselen)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> count_rune_matches(pgroups)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> stats.first_word_nth_rune_matches[<span class="dv">0</span>] <span class="op">/</span> stats.pairs</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>sections <span class="op">=</span> lp.load_unsolved().sections()</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>target_mr <span class="op">=</span> measure_phrasestart_match_rate(sections, <span class="dv">2</span>) <span class="op">-</span> <span class="fl">0.001</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>section_target_mr <span class="op">=</span> {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    s.name(): measure_phrasestart_match_rate(s, <span class="dv">2</span>) <span class="op">-</span> <span class="fl">0.001</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> s <span class="kw">in</span> sections</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>crosses_strict_target_mr <span class="op">=</span> measure_phrasestart_match_rate(sections[<span class="dv">0</span>], <span class="dv">2</span>, <span class="va">True</span>) <span class="op">-</span> <span class="fl">0.001</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>counter <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>section_counters <span class="op">=</span> { s.name(): <span class="dv">0</span> <span class="cf">for</span> s <span class="kw">in</span> sections }</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>crosses_strict_counter <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> progress <span class="kw">in</span> <span class="bu">range</span>(total):</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    sections <span class="op">=</span> lp.load_fake_unsolved().sections() <span class="co">#[:-3]</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    match_rate <span class="op">=</span> measure_phrasestart_match_rate(sections, <span class="dv">2</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> match_rate <span class="op">&gt;=</span> target_mr: counter <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> s <span class="kw">in</span> sections:</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        match_rate <span class="op">=</span> measure_phrasestart_match_rate(s, <span class="dv">2</span>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> match_rate <span class="op">&gt;=</span> section_target_mr[s.name()]: section_counters[s.name()] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    match_rate <span class="op">=</span> measure_phrasestart_match_rate(sections[<span class="dv">0</span>], <span class="dv">2</span>, <span class="va">True</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> match_rate <span class="op">&gt;=</span> crosses_strict_target_mr: crosses_strict_counter <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(f'Progress: {progress}/{total}', end='\r')</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Measuring phrase-start m.r. for phrases &gt;= 2 words:'</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'M.r. for all sections together is in the top </span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> counter<span class="op">/</span>total<span class="sc">:.1f}</span><span class="ss">%.'</span>)</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> sections:</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'M.r. for "</span><span class="sc">{</span>s<span class="sc">.</span>name()<span class="sc">}</span><span class="ss">" is in the top </span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> section_counters[s.name()]<span class="op">/</span>total<span class="sc">:.1f}</span><span class="ss">%.'</span>)</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Measuring phrase-start m.r. strictly for phrases == 2 words:'</span>)</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'M.r. for "Crosses" is in the top </span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> crosses_strict_counter<span class="op">/</span>total<span class="sc">:.1f}</span><span class="ss">%.'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Measuring phrase-start m.r. for phrases &gt;= 2 words:
+M.r. for all sections together is in the top 0.1%.
+M.r. for "Crosses" is in the top 4.4%.
+M.r. for "Spirals" is in the top 4.4%.
+M.r. for "Branches" is in the top 6.6%.
+M.r. for "Moebius" is in the top 0.6%.
+M.r. for "Mayfly" is in the top 3.6%.
+M.r. for "Wing Tree" is in the top 61.2%.
+M.r. for "Cuneiform" is in the top 37.2%.
+M.r. for "Spiral Branches" is in the top 21.1%.
+Measuring phrase-start m.r. strictly for phrases == 2 words:
+M.r. for "Crosses" is in the top 31.2%.</code></pre>
+</div>
+</div>
+<p>The result for all sections is once again significant, so it indeed looks like something’s up. As for individual sections, even if they are not always statistically significant on their own, all sections up to <em>Mayfly</em> have very good match rates (except for <em>Crosses</em> when measured using strict phrase pair finding method instead of the more advanced method; other sections don’t have significantly different results), while for the last three sections the 2-word-phrase-start match rates seem mostly unremarkable. The <em>Moebius</em> section, in addition to having the longest phrase pairs and being the second-longest section, is also the top runner in terms of this metric.</p>
+<p>(<strong>Note:</strong> While this simulated approach to see the match rate percentages is important to make sure the method works in practice (which it may not due to some false assumptions or implementation errors), the percentages can be somewhat approximated using a probabilistic formula, which can be used to avoid long compute times. Without an in-depth explanation, the percentage is the probability that a measurement of a random variable with a distribution of <em>bin(1/29, PHRASE_PAIR_COUNT)</em> yields a value of at least <em>MATCH_COUNT</em>. For example, <em>Mayfly</em> has a match rate of 14/223, so using some <a href="https://www.gigacalculator.com/calculators/binomial-probability-calculator.php?solve=cdf&amp;probability=1%2F29&amp;trials=223&amp;events=14&amp;cdf=">specialized calculator</a>, we can calculate that it is approximately in the top 2.36%.)</p>
+</section>
+<section id="subset-of-sections" class="level2">
+<h2 class="anchored" data-anchor-id="subset-of-sections">Subset of Sections</h2>
+<p>If we omit the last 3 sections and only include ones up to <em>Mayfly</em>, we get a much more visible advantage of phrase-start match rate to word-start match rate:</p>
+<div class="cell" data-tbl-cap="Rune matches in same-length phrases (Unsolved LP up to the end of Mayfly by sections, combined)" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> min_phrase_length <span class="kw">in</span> [<span class="dv">7</span>, <span class="dv">6</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>]:</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    pgroups <span class="op">=</span> []</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> s <span class="kw">in</span> lp.load_unsolved().sections()[:<span class="op">-</span><span class="dv">3</span>]:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        pgroups <span class="op">+=</span> find_phrase_groups(s, min_phrase_length)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> count_rune_matches(pgroups)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    p,pm,a,m,wa,wm <span class="op">=</span> stats.pairs, stats.first_word_nth_rune_matches[<span class="dv">0</span>], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    data.append([</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>min_phrase_length<span class="sc">}</span><span class="ss"> words'</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        stats.pairs,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>m<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>a<span class="op">/</span>m<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> m <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="ss">f'0/</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">'</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>wm<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>wa<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>wa<span class="op">/</span>wm<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> wm <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="ss">f'0/</span><span class="sc">{</span>wa<span class="sc">}</span><span class="ss">'</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'</span><span class="sc">{</span>pm<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss"> (= 1/</span><span class="sc">{</span>p<span class="op">/</span>pm<span class="sc">:.1f}</span><span class="ss">)'</span> <span class="cf">if</span> pm <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="ss">f'0/</span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">'</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Min phrase'</span>, <span class="st">'Phrase pairs'</span>, <span class="st">'Match rate'</span>, <span class="st">'Word-start m.r.'</span>, <span class="st">'Phrase-start m.r.'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<caption>Rune matches in same-length phrases (Unsolved LP up to the end of Mayfly by sections, combined)</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Min phrase</th>
+<th data-quarto-table-cell-role="th">Phrase pairs</th>
+<th data-quarto-table-cell-role="th">Match rate</th>
+<th data-quarto-table-cell-role="th">Word-start m.r.</th>
+<th data-quarto-table-cell-role="th">Phrase-start m.r.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>7 words</td>
+<td>2</td>
+<td>4/49 (= 1/12.2)</td>
+<td>3/14 (= 1/4.7)</td>
+<td>1/2 (= 1/2.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>6 words</td>
+<td>2</td>
+<td>4/49 (= 1/12.2)</td>
+<td>3/14 (= 1/4.7)</td>
+<td>1/2 (= 1/2.0)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>5 words</td>
+<td>8</td>
+<td>9/161 (= 1/17.9)</td>
+<td>6/44 (= 1/7.3)</td>
+<td>2/8 (= 1/4.0)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>4 words</td>
+<td>37</td>
+<td>25/640 (= 1/25.6)</td>
+<td>10/160 (= 1/16.0)</td>
+<td>3/37 (= 1/12.3)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>3 words</td>
+<td>264</td>
+<td>141/3596 (= 1/25.5)</td>
+<td>37/841 (= 1/22.7)</td>
+<td>16/264 (= 1/16.5)</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>2 words</td>
+<td>1749</td>
+<td>651/17738 (= 1/27.2)</td>
+<td>156/3811 (= 1/24.4)</td>
+<td>100/1749 (= 1/17.5)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="59893585" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig_title <span class="op">=</span> <span class="st">'Rune matches among phrase pairs</span><span class="ch">\n</span><span class="st">(Sections of unsolved LP up to Mayfly only)'</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> [<span class="dv">7</span>,<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>Yall, Yword, Yphrase <span class="op">=</span> [], [], []</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> min_phrase_length <span class="kw">in</span> X:</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    pgroups <span class="op">=</span> []</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> s <span class="kw">in</span> lp.load_unsolved().sections()[:<span class="op">-</span><span class="dv">3</span>]:</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        pgroups <span class="op">+=</span> find_phrase_groups(s, min_phrase_length)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> count_rune_matches(pgroups)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    p,pm,a,m,wa,wm <span class="op">=</span> stats.pairs, stats.first_word_nth_rune_matches[<span class="dv">0</span>], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    Yall.append(m <span class="op">/</span> a <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    Yword.append(wm <span class="op">/</span> wa <span class="cf">if</span> wa <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    Yphrase.append(pm <span class="op">/</span> p <span class="cf">if</span> p <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yall, label<span class="op">=</span><span class="st">'Total match rate'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yword, label<span class="op">=</span><span class="st">'Word-start m. r.'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yphrase, label<span class="op">=</span><span class="st">'Phrase-start m. r.'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span><span class="op">/</span><span class="dv">29</span>, color<span class="op">=</span><span class="st">'#999999aa'</span>, label<span class="op">=</span><span class="st">'Expected m. r.'</span>)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(bottom<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_xaxis()</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(X)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_label_text(<span class="st">'Minimum phrase length in words'</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_label_text(<span class="st">'Match rate'</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>ax.set_title(fig_title)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-autokey-component-hypothesis_files/figure-html/cell-10-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If we calculate the percentage in which the 2-word phrase length match rate is, we get that it is in the top <a href="https://www.gigacalculator.com/calculators/binomial-probability-calculator.php?solve=cdf&amp;probability=1%2F29&amp;trials=1749&amp;events=100&amp;cdf=">0.0002%</a>, which is almost one in a million. The simulated testing is not useful here, because it would likely have to run a million iterations to get a single positive result, which would take way too much computing time (at times like these some may regret that I don’t have a C++ implementation).</p>
+</section>
+<section id="what-about-spiral-branches" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-spiral-branches">What About Spiral Branches?</h2>
+<p>Spiral Branches is one of the good sections when measured using word-start match rate, so why then is it not also one of the good sections when measured using phrase-start match rate (as is the case for the other good sections)?</p>
+<p>The match rate for phrase starts is never much higher than the word match rate, even when tweaking some parameters, such as the distinctive word length (which also sometimes worsens other statistics, which is not very nice).</p>
+<p>One explanation is that the section is too long and talks about too many things, which results in too many false positives. This could potentially be “fixed” by cutting the section into parts (assuming that similar content is mentioned in close proximity), but since this is not confirmed, I am not comfortable with it, since it could give us too much freedom to form patterns ourselves and see things that are not there.</p>
+<p>Another explanation is that an “autokey component” is simply not present in this section; after all, the beginnings of both the first and last words are “mostly the same, and sometimes slightly lower”, which makes sense given the possibility of a partially false-positive phrase pair. It also perhaps makes sense that the “last” section (barring <em>An end</em> and <em>Parable</em>), which also in its illustrations represents a combination of earlier sections (<em>Spirals</em> + <em>Branches</em>), would be meant to be solved later. Still, this is just speculation.</p>
+<p><del>And another option is that the hypotheses I made are all wrong and I don’t really understand how it works at all.</del></p>
+<div id="2de572d3" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig_title <span class="op">=</span> <span class="st">'Rune matches among phrase pairs</span><span class="ch">\n</span><span class="st">(Spiral Branches section)'</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>Yall, Yword, Yphrase <span class="op">=</span> [], [], []</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> min_phrase_length <span class="kw">in</span> X:</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    pgroups <span class="op">=</span> []</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> s <span class="kw">in</span> lp.load_unsolved().sections()[<span class="op">-</span><span class="dv">1</span>:]:</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        pgroups <span class="op">+=</span> find_phrase_groups_strict(s, min_phrase_length, <span class="dv">5</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    stats <span class="op">=</span> count_rune_matches(pgroups)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    p,pm,a,m,wa,wm <span class="op">=</span> stats.pairs, stats.first_word_nth_rune_matches[<span class="dv">0</span>], stats.runes, stats.rune_matches, stats.words, stats.word_begin_matches</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    Yall.append(m <span class="op">/</span> a <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    Yword.append(wm <span class="op">/</span> wa <span class="cf">if</span> wa <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    Yphrase.append(pm <span class="op">/</span> p <span class="cf">if</span> p <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yall, label<span class="op">=</span><span class="st">'Total match rate'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yword, label<span class="op">=</span><span class="st">'Word-start m. r.'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>ax.plot(X, Yphrase, label<span class="op">=</span><span class="st">'Phrase-start m. r.'</span>, marker<span class="op">=</span><span class="st">'.'</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span><span class="op">/</span><span class="dv">29</span>, color<span class="op">=</span><span class="st">'#999999aa'</span>, label<span class="op">=</span><span class="st">'Expected m. r.'</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(bottom<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_xaxis()</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(X)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_label_text(<span class="st">'Minimum phrase length in words'</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_label_text(<span class="st">'Match rate'</span>)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>ax.set_title(fig_title)</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02-autokey-component-hypothesis_files/figure-html/cell-11-output-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

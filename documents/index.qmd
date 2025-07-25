@@ -1,7 +1,5 @@
 # Liber Primus Statistical (and sometimes other) Analyses
 
-*(Note: if the hyperlinks lead to non-existent files then you should generate them using `make`)*
-
 ## Main Exploration Thread
 
 00. [Overview](./00-overview.html):
